@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer')
 const BaseUrl = `https://www.target.com`
 
 const scrollDownWait = async (page) => {
-  const scrollWaitTime = 500
+  const scrollWaitTime = 400
   await page.evaluate( () => {
     window.scrollBy(0, window.innerHeight);
   });
@@ -46,7 +46,7 @@ const fetchProducts = async (searchQuery) => {
   })
 
   await scrollPageToBottom(page, 6)
-  await page.waitForTimeout(3000)
+  await page.waitForTimeout(2000)
 
   const data = await page.evaluate(el => {
 
@@ -103,7 +103,7 @@ scrapingRoutes.post(
     try {
       const { searchQuery } = req.body;
       if (!searchQuery) {
-        res.status(400).json({ error: true, message: 'No Search Query' })
+        res.status(400).json({ error: true, errorMessage: 'No Search Query' })
         return
       }
       console.log('params - ', {searchQuery})
@@ -112,7 +112,7 @@ scrapingRoutes.post(
       res.status(200).send({error: false, items: data});
     } catch (error) {
       console.log('error - ', { error })
-      res.status(400).send({ error: true, message: 'Error while data scraping' })
+      res.status(400).send({ error: true, errorMessage: 'Error while data scraping' })
     }
   },
 );

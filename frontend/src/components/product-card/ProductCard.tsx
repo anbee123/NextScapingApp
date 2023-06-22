@@ -18,7 +18,7 @@ const ProductCard = ({ item }: ProductCardProps) => {
         alt=""
       />
     </ImageContainer>
-    <TextTitle>{item.title}</TextTitle>
+    <TextTitle href={item.linkUrl}>{item.title}</TextTitle>
     <TextPrice>{item.price}</TextPrice>
   </CardContainer>
   );

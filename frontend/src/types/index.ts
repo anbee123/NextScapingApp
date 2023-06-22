@@ -5,3 +5,9 @@ export interface ProductItemType {
   imgUrl: string
   linkUrl: string
 }
+
+export interface DataResponseType {
+  error: boolean
+  errorMessage?: string
+  items?: ProductItemType[]
+}

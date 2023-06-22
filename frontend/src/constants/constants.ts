@@ -20,3 +20,5 @@ export const mockData: ProductItemType[] = [
     linkUrl: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
   },
 ]
+
+export const BaseAPI = 'http://localhost:4000/api'

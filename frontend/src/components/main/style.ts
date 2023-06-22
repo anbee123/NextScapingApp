@@ -50,3 +50,13 @@ export const SearchResult = styled.div`
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `
+
+export const TextMessage = styled.h2`
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  text-decoration: none;
+  color: #4B5563;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 2rem;
+`
