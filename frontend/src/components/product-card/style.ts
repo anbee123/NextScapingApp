@@ -30,7 +30,7 @@ export const TextTitle = styled(Link)`
   padding-top: 0.5rem;
   margin-top: 0.5rem;
   text-decoration: none;
-  color: #4B5563;
+  color: #000000;
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 2rem;
@@ -39,5 +39,5 @@ export const TextTitle = styled(Link)`
 export const TextPrice = styled.h5`
   font-size: 1.2rem;
   line-height: 2rem;
-  color: #4B5563;
+  color: #000000;
 `
