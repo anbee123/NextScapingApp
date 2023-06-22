@@ -1,65 +1,100 @@
 const express = require('express');
 const scrapingRoutes = express.Router();
 
-const mockedData = [
-  {
-    title: '1 Banana',
-    price: '$5',
-    imgUrl: '',
-    linkUrl: '',
-  },
-  {
-    title: '2 Apple',
-    price: '$5',
-    imgUrl: 'https://static.tvmaze.com/uploads/images/original_untouched/99/249943.jpg',
-    linkUrl: 'https://static.tvmaze.com/uploads/images/original_untouched/99/249943.jpg',
-  },
-  {
-    title: '3 Chocolate',
-    price: '$10',
-    imgUrl: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    linkUrl: 'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-  }
-]
-
 const puppeteer = require('puppeteer')
 
-// const siteUrl = `https://www.target.com`
-const siteUrl = `https://www.pexels.com/search`
+const BaseUrl = `https://www.target.com`
 
-const fetchData = async (searchQuery) => {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await page.setRequestInterception(true);
-  const query = `s?searchTerm=${searchQuery}`
-  // const query = 'chocolate'
-
-  page.on('request', request => {
-    if (request.resourceType() === 'image') {
-      request.abort();
-    } else {
-      request.continue();
-    }
+const scrollDownWait = async (page) => {
+  const scrollWaitTime = 500
+  await page.evaluate( () => {
+    window.scrollBy(0, window.innerHeight);
   });
-  await page.goto(`${siteUrl}/${query}`)
-  await page.screenshot({path: 'news.png', fullPage: true});
+  console.log('----- scroll downed')
+  await page.waitForTimeout(scrollWaitTime)
+}
 
+const scrollPageToBottom = async (page, scrollDownCount) => {
+  const promises = Array(scrollDownCount).fill(scrollDownWait)
+  if (!page) return
+  await promises.reduce(async (prev, next) => {
+    return prev.then(() => next(page))
+  },Promise.resolve())
+}
+
+const fetchProducts = async (searchQuery) => {
+  const browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: null,
+    dumpio: true,
+    defaultViewport: {
+      width: 1280,
+      height: 720,
+    },
+  })
+  const page = await browser.newPage()
+  const url = `${BaseUrl}/s?searchTerm=${searchQuery}`
+
+  console.log(`Scraping URL: ${url}`)
+  await page.goto(url, {
+    waitUntil: "networkidle2",
+  })
+
+  page.on('console', message => {
+    const type = message.type().substr(0, 3).toUpperCase()
+    console.log(`- page log - ${type} ${message.text()}`)
+  })
+
+  await scrollPageToBottom(page, 6)
+  await page.waitForTimeout(3000)
+
+  const data = await page.evaluate(el => {
+
+    const keyClass = {
+      element: '.styles__StyledCardWrapper-sc-z8946b-0',
+      title: '.styles__Truncate-sc-1wcknu2-0 a',
+      price: `[data-test="current-price"] span`,
+      description: '.author',
+      imgUrl: '.ProductCardImage__PicturePrimary-sc-1y6rvoy-0.cJlyMM img',
+      linkUrl: 'a.styles__StyledLink-sc-vpsldm-0.kSbXRQ.h-display-block',
+    }
+
+    const elementItems = document.querySelectorAll(keyClass.element);
+    const res = []
+    if (!elementItems) return res
+
+    console.log('element counts: ', elementItems.length)
+    elementItems.forEach(item => {
+      if (!item) return
+      const titleElement = item.querySelector(keyClass.title)
+      if (!titleElement) return
+      const title = titleElement.textContent
+
+      const priceElement = item.querySelector(keyClass.price)
+      if (!priceElement) return
+      const price = priceElement.textContent
+
+      const imgElement = item.querySelector(keyClass.imgUrl)
+      if (!imgElement) return
+      const imgUrl = imgElement.getAttribute('src')
+
+      const linkElement = item.querySelector(keyClass.linkUrl)
+      if (!linkElement) return
+      const linkUrl = linkElement.getAttribute('href')
+
+      res.push({
+        title,
+        price,
+        imgUrl,
+        linkUrl,
+      })
+
+    })
+    return res
+  })
   await browser.close();
 
-  // const data = await page.evaluate(el => {
-  //   const items = document.querySelectorAll(`a`);
-  //   const res = []
-
-  //   for (const item of items) {
-  //     if (item.textContent)
-  //     res.push(item.textContent)
-  //   }
-
-  //   return items
-  // })
-
-  // return data
-  return ['test1', 'test2']
+  return data
 }
 
 scrapingRoutes.post(
@@ -68,13 +103,13 @@ scrapingRoutes.post(
     try {
       const { searchQuery } = req.body;
       if (!searchQuery) {
-        res.status(400).json({ error: true, message: 'Input a Search Query' })
+        res.status(400).json({ error: true, message: 'No Search Query' })
         return
       }
       console.log('params - ', {searchQuery})
-      const data = await fetchData(searchQuery)
-      res.status(200).send(data);
-      // res.status(200).send({error: false, items: mockedData});
+      const data = await fetchProducts(searchQuery)
+
+      res.status(200).send({error: false, items: data});
     } catch (error) {
       console.log('error - ', { error })
       res.status(400).send({ error: true, message: 'Error while data scraping' })
