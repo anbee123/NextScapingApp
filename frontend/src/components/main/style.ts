@@ -22,7 +22,7 @@ export const Container = styled.div`
   }
 `
 
-export const Content = styled.div`
+export const SearchContainer = styled.div`
   padding-left: 1.25rem;
   padding-right: 1.25rem;
   margin-left: auto;

@@ -13,7 +13,7 @@ const SearchBox = ({onSearch, isLoading = false}: SearchBoxProps) => {
     onChange(e.target.value);
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isLoading) {
       e.preventDefault()
       e.stopPropagation()
       onSearch(value)
