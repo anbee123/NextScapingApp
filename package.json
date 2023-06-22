@@ -5,7 +5,7 @@
   "scripts": {
     "install-frontend": "cd frontend && npm install",
     "install-backend": "cd backend && npm install",
-    "setup": "npm run install-backend && npm run install-frontend",
+    "setup": "npm install && npm run install-backend && npm run install-frontend",
     "start-frontend": "cd frontend && npm run dev",
     "start-backend": "cd backend && npm start",
     "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\""
