@@ -37,7 +37,7 @@ const Main = () => {
 
   return (<Container>
     <Content>
-      <SearchBox onSearch={onSearch} />
+      <SearchBox onSearch={onSearch} isLoading={isLoading} />
 
       {isLoading ? (
         <>Loading</>

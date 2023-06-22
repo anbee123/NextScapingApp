@@ -3,14 +3,22 @@ import { SearchField, Container, SearchIcon, Button, IconContainer, Input } from
 
 interface SearchBoxProps {
   onSearch: (searchQuery: string) => void
+  isLoading?: boolean
 }
 
-const SearchBox = ({onSearch}: SearchBoxProps) => {
+const SearchBox = ({onSearch, isLoading = false}: SearchBoxProps) => {
   const [value, onChange] = useState('');
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      e.stopPropagation()
+      onSearch(value)
+    }
+  }
 
   const handleAddClick = () => {
     onSearch(value);
@@ -32,11 +40,13 @@ const SearchBox = ({onSearch}: SearchBoxProps) => {
         name="search"
         value={value}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         placeholder="Search"
       />
     </SearchField>
     <Button
       onClick={handleAddClick}
+      disabled={isLoading}
     >
       Search
     </Button>

@@ -60,7 +60,14 @@ export const Button = styled.button`
   height: 2.5rem;
 
   &:hover {
-    background-color: #1F2937; 
+    background-color: #1F2937;
+    &:disabled {
+      background-color: #737c8b;
+    }
+  }
+  &:disabled {
+    cursor: auto;
+    background-color: #737c8b;
   }
 `
 
