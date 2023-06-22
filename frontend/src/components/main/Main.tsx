@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SearchBox } from "../search-box";
-import { Container, SearchContainer, SearchResult, TextMessage } from "./style";
+import { Container, Layout, SearchContainer, SearchResult, TextMessage } from "./style";
 import { DataResponseType, ProductItemType } from "@/types";
 import { ProductCard } from "../product-card";
 import { BaseAPI } from "@/constants/constants";
@@ -35,22 +35,24 @@ const Main = () => {
     setIsLoading(false)
   }
 
-  return (<Container>
-    <SearchContainer>
-      <SearchBox onSearch={onSearch} isLoading={isLoading} />
-    </SearchContainer>
-    {isLoading ? (
-      <>Loading</>
-    ) : (
+  return (<Layout>
+    <Container>
+      <SearchContainer>
+        <SearchBox onSearch={onSearch} isLoading={isLoading} />
+      </SearchContainer>
       <SearchResult>
-        {(productList && productList.length > 0) ?
-          productList.slice(0, maxShowCount).map((item, index) => <ProductCard key={index} item={item} />)
-          :
-          <TextMessage>{message}</TextMessage>
+        {isLoading ? (
+          <TextMessage>Loading</TextMessage>
+        ) :
+          (productList && productList.length > 0) ?
+            productList.slice(0, maxShowCount).map((item, index) => <ProductCard key={index} item={item} />)
+            :
+            <TextMessage>{message}</TextMessage>
+
         }
       </SearchResult>
-    )}
-  </Container>
+    </Container>
+  </Layout>
   );
 };
 

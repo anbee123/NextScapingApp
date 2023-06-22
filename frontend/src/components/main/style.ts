@@ -55,9 +55,16 @@ export const TextMessage = styled.h2`
   padding-top: 0.5rem;
   margin-top: 0.5rem;
   text-decoration: none;
-  color: #4B5563;
+  color: #000000;
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 2rem;
   white-space: nowrap;
+`
+
+export const Layout = styled.div`
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(312deg, rgba(85,78,190,1) 0%, rgba(55,55,172,1) 46%, rgba(0,212,255,1) 100%);
 `
