@@ -24,7 +24,7 @@ const scrollPageToBottom = async (page, scrollDownCount) => {
 
 const fetchProducts = async (searchQuery) => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null,
     dumpio: true,
     defaultViewport: {
@@ -32,7 +32,9 @@ const fetchProducts = async (searchQuery) => {
       height: 720,
     },
   })
+
   const page = await browser.newPage()
+
   const url = `${BaseUrl}/s?searchTerm=${searchQuery}`
 
   console.log(`Scraping URL: ${url}`)
